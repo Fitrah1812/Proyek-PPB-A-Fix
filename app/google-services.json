@@ -1,0 +1,68 @@
+{
+  "project_info": {
+    "project_number": "394785158001",
+    "project_id": "cameratoserver-14e5b",
+    "storage_bucket": "cameratoserver-14e5b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:394785158001:android:8fb5362592cfb056573cd0",
+        "android_client_info": {
+          "package_name": "com.example.camera"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "394785158001-u2i7abrjc5l3aggif98gl630fonpb08o.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBSSs24kP_9h-xM94MAZ1Y_EcKFHryzGJE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "394785158001-u2i7abrjc5l3aggif98gl630fonpb08o.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:394785158001:android:c44436b0624d4e36573cd0",
+        "android_client_info": {
+          "package_name": "com.example.projectkamera"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "394785158001-u2i7abrjc5l3aggif98gl630fonpb08o.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBSSs24kP_9h-xM94MAZ1Y_EcKFHryzGJE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "394785158001-u2i7abrjc5l3aggif98gl630fonpb08o.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
