@@ -18,6 +18,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -54,8 +55,7 @@ public class MainActivity extends AppCompatActivity {
     FirebaseStorage storage;
     StorageReference storageReference;
 
-    Button b1;
-
+    Button b1, b2;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
         imageView =  findViewById(R.id.imgView);
 
         b1 = (Button) findViewById(R.id.button);
-
+        b2 = (Button) findViewById(R.id.button2);
         storage = FirebaseStorage.getInstance();
         storageReference = storage.getReference();
         EnableRuntimePermission();
@@ -80,7 +80,28 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent it = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 //                File imageFolder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
-                File imageFolder = new File(Environment.getExternalStorageDirectory(), "Pictures");
+//                File imageFolder = new File(Environment.getExternalStorageDirectory(), "HasilFoto");
+//                imageFolder.mkdir();
+//                String imageF = Environment.getExternalStorageDirectory().getPath();
+//                File imageFolder = new File(imageF, "HasilFoto");
+//                imageFolder.mkdir();
+                final File imageFolder = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), "HasilFoto");
+
+                if (!imageFolder.exists()) {
+                    boolean rv = imageFolder.mkdir();
+                    if(rv){
+                        Toast.makeText(MainActivity.this,
+                                "Folder berhasil terbuat!!", Toast.LENGTH_SHORT).show();
+                    }
+                    else
+                    {
+                        Toast.makeText(MainActivity.this,
+                                "Gagal", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(MainActivity.this,
+                            "Folder Gagal terbuat. Sudah ada Folder tersebut!!", Toast.LENGTH_SHORT).show();
+                }
                 Date d = new Date();
                 CharSequence s = DateFormat.format("MM-dd-yy hh-mm-ss", d.getTime());
                 File image = new File(imageFolder, s.toString() + ".jpg");
@@ -89,6 +110,14 @@ public class MainActivity extends AppCompatActivity {
                         "com.example.projectkamera.MainActivity.provider", image);
                 it.putExtra(MediaStore.EXTRA_OUTPUT, uriSavedImage);
                 startActivityForResult(it,0);
+            }
+        });
+
+        b2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent it = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                startActivityForResult(it,7);
             }
         });
 
@@ -129,11 +158,11 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode,
                 resultCode,
                 data);
-//        if (requestCode == 7 && resultCode == RESULT_OK) {
-//            filePath = data.getData();
-//            Bitmap bitmap = (Bitmap) data.getExtras().get("data");
-//            imageView.setImageBitmap(bitmap);
-//        }
+        if (requestCode == 7 && resultCode == RESULT_OK) {
+            filePath = data.getData();
+            Bitmap bitmap = (Bitmap) data.getExtras().get("data");
+            imageView.setImageBitmap(bitmap);
+        }
         if (requestCode == PICK_IMAGE_REQUEST
                 && resultCode == RESULT_OK
                 && data != null
