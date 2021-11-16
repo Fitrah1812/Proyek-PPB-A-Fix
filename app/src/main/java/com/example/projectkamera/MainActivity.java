@@ -3,10 +3,13 @@ package com.example.projectkamera;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.FileProvider;
 
+import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -34,11 +37,13 @@ import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
 
-    private Button btnSelect, btnUpload;
+    private Button btnSelect, btnUpload, klikimage;
 
     // view for image view
     private ImageView imageView;
+    private ImageView viewklik;
 
+    public static final int RequestPermissionCode = 1 ;
     // Uri indicates, where the image will be picked from
     private Uri filePath;
 
@@ -50,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
     StorageReference storageReference;
 
     Button b1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,24 +69,25 @@ public class MainActivity extends AppCompatActivity {
         btnSelect =  findViewById(R.id.btnChoose);
         btnUpload =  findViewById(R.id.btnUpload);
         imageView =  findViewById(R.id.imgView);
+
         b1 = (Button) findViewById(R.id.button);
 
         storage = FirebaseStorage.getInstance();
         storageReference = storage.getReference();
-
+        EnableRuntimePermission();
         b1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent it = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                File imageFolder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
-                Date d = new Date();
-                CharSequence s = DateFormat.format("MM-dd-yy hh-mm-ss", d.getTime());
-                File image = new File(imageFolder, s.toString() + ".jpg");
-                Uri uriSavedImage = FileProvider.getUriForFile(
-                        MainActivity.this,
-                        "com.example.projectkamera.MainActivity.provider", image);
-                it.putExtra(MediaStore.EXTRA_OUTPUT, uriSavedImage);
-                startActivityForResult(it,0);
+//                File imageFolder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
+//                Date d = new Date();
+//                CharSequence s = DateFormat.format("MM-dd-yy hh-mm-ss", d.getTime());
+//                File image = new File(imageFolder, s.toString() + ".jpg");
+//                Uri uriSavedImage = FileProvider.getUriForFile(
+//                        MainActivity.this,
+//                        "com.example.projectkamera.MainActivity.provider", image);
+//                it.putExtra(MediaStore.EXTRA_OUTPUT, uriSavedImage);
+                startActivityForResult(it,7);
             }
         });
 
@@ -121,7 +128,10 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode,
                 resultCode,
                 data);
-
+        if (requestCode == 7 && resultCode == RESULT_OK) {
+            Bitmap bitmap = (Bitmap) data.getExtras().get("data");
+            imageView.setImageBitmap(bitmap);
+        }
         if (requestCode == PICK_IMAGE_REQUEST
                 && resultCode == RESULT_OK
                 && data != null
@@ -207,6 +217,27 @@ public class MainActivity extends AppCompatActivity {
                                                     + (int)progress + "%");
                                 }
                             });
+        }
+    }
+
+    public void EnableRuntimePermission(){
+        if (ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this, Manifest.permission.CAMERA)) {
+            Toast.makeText(MainActivity.this,"CAMERA permission allows us to Access CAMERA app", Toast.LENGTH_LONG).show();
+        } else {
+            ActivityCompat.requestPermissions(MainActivity.this,new String[]{ Manifest.permission.CAMERA}, RequestPermissionCode);
+        }
+    }
+    @Override
+    public void onRequestPermissionsResult(int RC, String per[], int[] PResult) {
+        super.onRequestPermissionsResult(RC, per, PResult);
+        switch (RC) {
+            case RequestPermissionCode:
+                if (PResult.length > 0 && PResult[0] == PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(MainActivity.this, "Permission Granted, Now your application can access CAMERA.", Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(MainActivity.this, "Permission Canceled, Now your application cannot access CAMERA.", Toast.LENGTH_LONG).show();
+                }
+                break;
         }
     }
 }
