@@ -3,10 +3,13 @@ package com.example.projectkamera;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.FileProvider;
 
+import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -15,17 +18,11 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.format.DateFormat;
-import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
-
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
 import java.io.IOException;
@@ -44,12 +41,18 @@ public class MainActivity extends AppCompatActivity {
 
     // request code
     private final int PICK_IMAGE_REQUEST = 22;
+    private static final int kodekamera = 222;
+    public static final int RequestPermissionCode = 1;
+
+    private String namaFile;
+    private String namaFolder;
 
     // instance for firebase storage and StorageReference
     FirebaseStorage storage;
     StorageReference storageReference;
 
     Button b1;
+    Intent it;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,43 +66,53 @@ public class MainActivity extends AppCompatActivity {
         btnSelect =  findViewById(R.id.btnChoose);
         btnUpload =  findViewById(R.id.btnUpload);
         imageView =  findViewById(R.id.imgView);
-        b1 = (Button) findViewById(R.id.button);
+        b1 = findViewById(R.id.button);
 
         storage = FirebaseStorage.getInstance();
         storageReference = storage.getReference();
 
-        b1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent it = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        EnableRuntimePermission();
+
+        b1.setOnClickListener(view -> {
+            it = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 File imageFolder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
+                namaFolder = imageFolder.toString();
                 Date d = new Date();
                 CharSequence s = DateFormat.format("MM-dd-yy hh-mm-ss", d.getTime());
                 File image = new File(imageFolder, s.toString() + ".jpg");
+                namaFile = image.toString();
                 Uri uriSavedImage = FileProvider.getUriForFile(
                         MainActivity.this,
                         "com.example.projectkamera.MainActivity.provider", image);
                 it.putExtra(MediaStore.EXTRA_OUTPUT, uriSavedImage);
-                startActivityForResult(it,0);
-            }
+            startActivityForResult(it,kodekamera);
         });
 
-        btnSelect.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v)
-            {
-                SelectImage();
-            }
-        });
+        btnSelect.setOnClickListener(v -> SelectImage());
 
-        btnUpload.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v)
-            {
-                uploadImage();
-            }
-        });
+        btnUpload.setOnClickListener(v -> uploadImage());
     }
+
+    public void EnableRuntimePermission() {
+        if (ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this, Manifest.permission.CAMERA)) {
+            Toast.makeText(MainActivity.this, "CAMERA permission allows us to Access CAMERA app", Toast.LENGTH_LONG).show();
+        } else {
+            ActivityCompat.requestPermissions(MainActivity.this, new String[] {
+                    Manifest.permission.CAMERA
+            }, RequestPermissionCode);
+        }
+    }
+    @Override public void onRequestPermissionsResult(int RC, @NonNull String[] per, @NonNull int[] PResult) {
+        super.onRequestPermissionsResult(RC, per, PResult);
+        if (RC == RequestPermissionCode) {
+            if (PResult.length > 0 && PResult[0] == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(MainActivity.this, "Permission Granted, Now your application can access CAMERA.", Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(MainActivity.this, "Permission Canceled, Now your application cannot access CAMERA.", Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
     private void SelectImage()
     {
 
@@ -123,10 +136,9 @@ public class MainActivity extends AppCompatActivity {
                 data);
 
         if (requestCode == PICK_IMAGE_REQUEST
-                && resultCode == RESULT_OK
-                && data != null
-                && data.getData() != null) {
-
+                  && resultCode == RESULT_OK
+                  && data != null
+                  && data.getData() != null) {
             // Get the Uri of data
             filePath = data.getData();
             try {
@@ -139,12 +151,15 @@ public class MainActivity extends AppCompatActivity {
                                 getContentResolver(),
                                 filePath);
                 imageView.setImageBitmap(bitmap);
-            }
-
-            catch (IOException e) {
+            } catch (IOException e) {
                 // Log the exception
                 e.printStackTrace();
             }
+        }
+        else if (requestCode == 7 && resultCode == RESULT_OK) {
+
+            Bitmap bitmap = (Bitmap) data.getExtras().get("data");
+            imageView.setImageBitmap(bitmap);
         }
     }
 
@@ -169,44 +184,31 @@ public class MainActivity extends AppCompatActivity {
             // or failure of image
             ref.putFile(filePath)
                     .addOnSuccessListener(
-                            new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                                @Override
-                                public void onSuccess(
-                                        UploadTask.TaskSnapshot taskSnapshot)
-                                {
-                                    progressDialog.dismiss();
-                                    Toast.makeText(MainActivity.this,
-                                                    "Gambar Terupload!!", Toast.LENGTH_SHORT).show();
-                                }
+                            taskSnapshot -> {
+                                progressDialog.dismiss();
+                                Toast.makeText(MainActivity.this,
+                                                "Gambar Terupload!!", Toast.LENGTH_SHORT).show();
                             })
 
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e)
-                        {
-                            progressDialog.dismiss();
-                            Toast
-                                    .makeText(MainActivity.this,
-                                            "Failed " + e.getMessage(),
-                                            Toast.LENGTH_SHORT)
-                                    .show();
-                        }
+                    .addOnFailureListener(e -> {
+                        progressDialog.dismiss();
+                        Toast
+                                .makeText(MainActivity.this,
+                                        "Failed " + e.getMessage(),
+                                        Toast.LENGTH_SHORT)
+                                .show();
                     })
                     .addOnProgressListener(
-                            new OnProgressListener<UploadTask.TaskSnapshot>() {
-                                @Override
-                                public void onProgress(
-                                        UploadTask.TaskSnapshot taskSnapshot)
-                                {
-                                    double progress
-                                            = (100.0
-                                            * taskSnapshot.getBytesTransferred()
-                                            / taskSnapshot.getTotalByteCount());
-                                    progressDialog.setMessage(
-                                            "Uploaded "
-                                                    + (int)progress + "%");
-                                }
+                            taskSnapshot -> {
+                                double progress
+                                        = (100.0
+                                        * taskSnapshot.getBytesTransferred()
+                                        / taskSnapshot.getTotalByteCount());
+                                progressDialog.setMessage(
+                                        "Uploaded "
+                                                + (int)progress + "%");
                             });
         }
     }
+
 }
