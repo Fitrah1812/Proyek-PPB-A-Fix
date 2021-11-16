@@ -36,7 +36,10 @@ import com.google.firebase.storage.UploadTask;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Date;
 import java.util.UUID;
@@ -196,6 +199,36 @@ public class MainActivity extends AppCompatActivity {
             filePath = getIntent().getData();
             Bitmap bitmap = (Bitmap) data.getExtras().get("data");
             imageView.setImageBitmap(bitmap);
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+            byte[] byteArray = stream.toByteArray(); // convert camera photo to byte array
+
+            // save it in your external storage.
+            File dir=  Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
+            File output=new File(dir, "simpan.png");
+            FileOutputStream fo = null;
+            try {
+                fo = new FileOutputStream(output);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+            try {
+                fo.write(byteArray);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            try {
+                fo.flush();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            try {
+                fo.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            Toast.makeText(this,"Data Telah Terload ke ImageView" + output,Toast.LENGTH_LONG).show();
         }
         if (requestCode == PICK_IMAGE_REQUEST
                 && resultCode == RESULT_OK
