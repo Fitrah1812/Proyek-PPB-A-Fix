@@ -205,9 +205,12 @@ public class MainActivity extends AppCompatActivity {
             byte[] byteArray = stream.toByteArray(); // convert camera photo to byte array
 
             // save it in your external storage.
-            File dir=  Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
-            File output=new File(dir, "simpan.png");
+            File dir=  new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), "HasilFoto");
+            Date d = new Date();
+            CharSequence s = DateFormat.format("MM-dd-yy hh-mm-ss", d.getTime());
+            File output=new File(dir, s.toString() + ".jpg");
             FileOutputStream fo = null;
+            filePath = data.getData();
             try {
                 fo = new FileOutputStream(output);
             } catch (FileNotFoundException e) {
@@ -228,6 +231,7 @@ public class MainActivity extends AppCompatActivity {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+
             Toast.makeText(this,"Data Telah Terload ke ImageView" + output,Toast.LENGTH_LONG).show();
         }
         if (requestCode == PICK_IMAGE_REQUEST
