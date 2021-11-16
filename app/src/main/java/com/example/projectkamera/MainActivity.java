@@ -80,14 +80,15 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent it = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 //                File imageFolder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
-//                Date d = new Date();
-//                CharSequence s = DateFormat.format("MM-dd-yy hh-mm-ss", d.getTime());
-//                File image = new File(imageFolder, s.toString() + ".jpg");
-//                Uri uriSavedImage = FileProvider.getUriForFile(
-//                        MainActivity.this,
-//                        "com.example.projectkamera.MainActivity.provider", image);
-//                it.putExtra(MediaStore.EXTRA_OUTPUT, uriSavedImage);
-                startActivityForResult(it,7);
+                File imageFolder = new File(Environment.getExternalStorageDirectory(), "Pictures");
+                Date d = new Date();
+                CharSequence s = DateFormat.format("MM-dd-yy hh-mm-ss", d.getTime());
+                File image = new File(imageFolder, s.toString() + ".jpg");
+                Uri uriSavedImage = FileProvider.getUriForFile(
+                        MainActivity.this,
+                        "com.example.projectkamera.MainActivity.provider", image);
+                it.putExtra(MediaStore.EXTRA_OUTPUT, uriSavedImage);
+                startActivityForResult(it,0);
             }
         });
 
@@ -128,10 +129,11 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode,
                 resultCode,
                 data);
-        if (requestCode == 7 && resultCode == RESULT_OK) {
-            Bitmap bitmap = (Bitmap) data.getExtras().get("data");
-            imageView.setImageBitmap(bitmap);
-        }
+//        if (requestCode == 7 && resultCode == RESULT_OK) {
+//            filePath = data.getData();
+//            Bitmap bitmap = (Bitmap) data.getExtras().get("data");
+//            imageView.setImageBitmap(bitmap);
+//        }
         if (requestCode == PICK_IMAGE_REQUEST
                 && resultCode == RESULT_OK
                 && data != null
