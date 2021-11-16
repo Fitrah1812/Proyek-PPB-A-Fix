@@ -4,10 +4,12 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 
 import android.Manifest;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -20,6 +22,7 @@ import android.provider.MediaStore;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.View;
+import android.webkit.PermissionRequest;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -30,6 +33,8 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -50,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
 
     // request code
     private final int PICK_IMAGE_REQUEST = 22;
-
+    private  static final int PERMISSION_REQUEST_CODE = 7;
     // instance for firebase storage and StorageReference
     FirebaseStorage storage;
     StorageReference storageReference;
@@ -74,35 +79,45 @@ public class MainActivity extends AppCompatActivity {
         b2 = (Button) findViewById(R.id.button2);
         storage = FirebaseStorage.getInstance();
         storageReference = storage.getReference();
+
+        Uri globalLink;
         EnableRuntimePermission();
         b1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent it = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-//                File imageFolder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
-//                File imageFolder = new File(Environment.getExternalStorageDirectory(), "HasilFoto");
-//                imageFolder.mkdir();
+
 //                String imageF = Environment.getExternalStorageDirectory().getPath();
 //                File imageFolder = new File(imageF, "HasilFoto");
 //                imageFolder.mkdir();
-                final File imageFolder = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), "HasilFoto");
+//                final File imageFolder = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), "HasilFoto");
 
-                if (!imageFolder.exists()) {
-                    boolean rv = imageFolder.mkdir();
-                    if(rv){
-                        Toast.makeText(MainActivity.this,
-                                "Folder berhasil terbuat!!", Toast.LENGTH_SHORT).show();
-                    }
-                    else
-                    {
-                        Toast.makeText(MainActivity.this,
-                                "Gagal", Toast.LENGTH_SHORT).show();
-                    }
-                } else {
-                    Toast.makeText(MainActivity.this,
-                            "Folder Gagal terbuat. Sudah ada Folder tersebut!!", Toast.LENGTH_SHORT).show();
+//                if (!imageFolder.exists()) {
+//                    boolean rv = imageFolder.mkdirs();
+//                    if(rv){
+//                        Toast.makeText(MainActivity.this,
+//                                "Folder berhasil terbuat!!", Toast.LENGTH_SHORT).show();
+//                    }
+//                    else
+//                    {
+//                        Toast.makeText(MainActivity.this,
+//                                "Gagal", Toast.LENGTH_SHORT).show();
+//                    }
+//                } else {
+//                    Toast.makeText(MainActivity.this,
+//                            "Folder Gagal terbuat. Sudah ada Folder tersebut!!", Toast.LENGTH_SHORT).show();
+//                }
+
+                if(ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED){
+                    createDirectory("HasilFoto");
+                }else{
+                    askPermission();
                 }
+
+                final File imageFolder = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), "HasilFoto");
+                imageFolder.mkdirs();
                 Date d = new Date();
+
                 CharSequence s = DateFormat.format("MM-dd-yy hh-mm-ss", d.getTime());
                 File image = new File(imageFolder, s.toString() + ".jpg");
                 Uri uriSavedImage = FileProvider.getUriForFile(
@@ -137,6 +152,25 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+    private void askPermission() {
+        ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},PERMISSION_REQUEST_CODE);
+    }
+
+    private void createDirectory(String folderName) {
+
+        File file = new File(Environment.getExternalStorageDirectory(),folderName);
+
+        if (!file.exists()){
+            file.mkdir();
+            Toast.makeText(MainActivity.this,"Successful",Toast.LENGTH_SHORT).show();
+        }else
+        {
+
+            Toast.makeText(MainActivity.this,"Folder Already Exists",Toast.LENGTH_SHORT).show();
+        }
+    }
+
     private void SelectImage()
     {
 
@@ -159,7 +193,7 @@ public class MainActivity extends AppCompatActivity {
                 resultCode,
                 data);
         if (requestCode == 7 && resultCode == RESULT_OK) {
-            filePath = data.getData();
+            filePath = getIntent().getData();
             Bitmap bitmap = (Bitmap) data.getExtras().get("data");
             imageView.setImageBitmap(bitmap);
         }
