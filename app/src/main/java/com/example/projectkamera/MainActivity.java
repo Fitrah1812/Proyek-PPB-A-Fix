@@ -122,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
                 Date d = new Date();
 
                 CharSequence s = DateFormat.format("MM-dd-yy hh-mm-ss", d.getTime());
-                File image = new File(imageFolder, s.toString() + ".jpg");
+                File image = new File(imageFolder, "Foto" + s.toString() + ".jpg");
                 Uri uriSavedImage = FileProvider.getUriForFile(
                         MainActivity.this,
                         "com.example.projectkamera.MainActivity.provider", image);
@@ -208,7 +208,7 @@ public class MainActivity extends AppCompatActivity {
             File dir=  new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), "HasilFoto");
             Date d = new Date();
             CharSequence s = DateFormat.format("MM-dd-yy hh-mm-ss", d.getTime());
-            File output=new File(dir, s.toString() + ".jpg");
+            File output=new File(dir, "Foto" + s.toString() + ".jpg");
             FileOutputStream fo = null;
             filePath = data.getData();
             try {
