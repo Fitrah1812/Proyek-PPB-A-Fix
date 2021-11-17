@@ -38,7 +38,7 @@
                 android:id="@+id/btnChoose"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_baseline_photo_size_select_actual_24"
+                android:src="@drawable/ic_baseline_folder_24"
                 tools:ignore="ContentDescription"
                 android:background="@drawable/rounded_bg"
                 android:layout_margin="5dp"/>
@@ -56,7 +56,7 @@
                 android:id="@+id/button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_baseline_snippet_folder_24"
+                android:src="@drawable/ic_baseline_photo_camera_24"
                 tools:ignore="ContentDescription"
                 android:background="@drawable/rounded_bg"
                 android:layout_margin="5dp"/>
@@ -73,7 +73,7 @@
                 android:id="@+id/button2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_baseline_linked_camera_24"
+                android:src="@drawable/ic_baseline_camera_24"
                 tools:ignore="ContentDescription"
                 android:background="@drawable/rounded_bg"
                 android:layout_margin="5dp"/>
