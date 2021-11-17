@@ -18,6 +18,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.FileUtils;
 import android.provider.MediaStore;
 import android.text.format.DateFormat;
 import android.util.Log;
@@ -41,6 +42,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Date;
 import java.util.UUID;
 
@@ -58,6 +60,9 @@ public class MainActivity extends AppCompatActivity {
 
     // request code
     private final int PICK_IMAGE_REQUEST = 22;
+
+    private  final int CAMERA_REQUEST_CODE = 1;
+//    private final int PICK_IMAGE_MANTAP = 7;
     private  static final int PERMISSION_REQUEST_CODE = 7;
     // instance for firebase storage and StorageReference
     FirebaseStorage storage;
@@ -135,7 +140,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent it = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                startActivityForResult(it,7);
+                if (it.resolveActivity(getPackageManager()) != null) {
+                    startActivityForResult(it, CAMERA_REQUEST_CODE);
+                }
+                startActivityForResult(it,CAMERA_REQUEST_CODE);
             }
         });
 
@@ -187,6 +195,8 @@ public class MainActivity extends AppCompatActivity {
                         "Select Image from here..."),
                 PICK_IMAGE_REQUEST);
     }
+
+
     @Override
     protected void onActivityResult(int requestCode,
                                     int resultCode,
@@ -195,8 +205,9 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode,
                 resultCode,
                 data);
-        if (requestCode == 7 && resultCode == RESULT_OK) {
-            filePath = getIntent().getData();
+        if (requestCode == CAMERA_REQUEST_CODE && resultCode == RESULT_OK  ) {
+
+            filePath = data.getData();
             Bitmap bitmap = (Bitmap) data.getExtras().get("data");
             imageView.setImageBitmap(bitmap);
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
@@ -206,11 +217,23 @@ public class MainActivity extends AppCompatActivity {
 
             // save it in your external storage.
             File dir=  new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), "HasilFoto");
+            if (!dir.exists()){
+                dir.mkdir();
+//                Toast.makeText(MainActivity.this,"Successful",Toast.LENGTH_SHORT).show();
+            }else
+            {
+//                Toast.makeText(MainActivity.this,"Folder Already Exists",Toast.LENGTH_SHORT).show();
+            }
+
             Date d = new Date();
-            CharSequence s = DateFormat.format("MM-dd-yy hh-mm-ss", d.getTime());
+            CharSequence s = DateFormat.format("MM-dd-yyhh-mm-ss", d.getTime());
             File output=new File(dir, "Foto" + s.toString() + ".jpg");
+
+//            filePath = Uri.parse(data.getData());
+            filePath = Uri.fromFile(output);
+//            filePath = data.getData();
             FileOutputStream fo = null;
-            filePath = data.getData();
+
             try {
                 fo = new FileOutputStream(output);
             } catch (FileNotFoundException e) {
