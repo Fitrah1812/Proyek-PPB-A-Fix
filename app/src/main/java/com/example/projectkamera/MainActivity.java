@@ -16,6 +16,7 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.FileUtils;
@@ -23,8 +24,10 @@ import android.provider.MediaStore;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.webkit.PermissionRequest;
-import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -46,7 +49,7 @@ import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
 
-    private Button btnSelect, btnUpload, klikimage;
+    private ImageButton btnSelect, btnUpload;
 
     // view for image view
     private ImageView imageView;
@@ -67,23 +70,31 @@ public class MainActivity extends AppCompatActivity {
     FirebaseStorage storage;
     StorageReference storageReference;
 
-    Button b1, b2;
+    ImageButton b1, b2;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
+        if (Build.VERSION.SDK_INT >= 21) {
+            Window window = this.getWindow();
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            window.setStatusBarColor(Color.parseColor("#33DDFF"));
+        }
+
         ActionBar actionBar;
         actionBar = getSupportActionBar();
-        ColorDrawable colorDrawable = new ColorDrawable(Color.parseColor("#0F9D58"));
+        ColorDrawable colorDrawable = new ColorDrawable(Color.parseColor("#33DDFF"));
         actionBar.setBackgroundDrawable(colorDrawable);
 
         btnSelect =  findViewById(R.id.btnChoose);
         btnUpload =  findViewById(R.id.btnUpload);
         imageView =  findViewById(R.id.imgView);
 
-        b1 = (Button) findViewById(R.id.button);
-        b2 = (Button) findViewById(R.id.button2);
+        b1 = findViewById(R.id.button);
+        b2 = findViewById(R.id.button2);
         storage = FirebaseStorage.getInstance();
         storageReference = storage.getReference();
 

@@ -17,46 +17,66 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="400dp"
-            android:orientation="vertical" >
+            android:orientation="vertical"
+            android:paddingBottom="20dp">
 
             <ImageView
                 android:id="@+id/imgView"
                 android:layout_width="fill_parent"
                 android:layout_height="400dp"
-                app:srcCompat="@mipmap/ic_launcher"/>
+                app:srcCompat="@mipmap/ic_launcher"
+                tools:ignore="ContentDescription" />
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center">
 
-
-            <Button
-                android:id="@+id/button"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Take Picture Folder" />
-
-            <Button
-                android:id="@+id/button2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Take Picture View" />
-
-            <Button
+            <ImageButton
                 android:id="@+id/btnChoose"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Choose" />
+                android:src="@drawable/ic_baseline_photo_size_select_actual_24"
+                tools:ignore="ContentDescription"
+                android:background="@drawable/rounded_bg"
+                android:layout_margin="5dp"/>
 
-            <Button
+            <ImageButton
                 android:id="@+id/btnUpload"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Upload" />
+                android:src="@drawable/ic_baseline_cloud_upload_24"
+                tools:ignore="ContentDescription"
+                android:background="@drawable/rounded_bg"
+                android:layout_margin="5dp"/>
 
+            <ImageButton
+                android:id="@+id/button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_baseline_snippet_folder_24"
+                tools:ignore="ContentDescription"
+                android:background="@drawable/rounded_bg"
+                android:layout_margin="5dp"/>
 
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center">
+
+            <ImageButton
+                android:id="@+id/button2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_baseline_linked_camera_24"
+                tools:ignore="ContentDescription"
+                android:background="@drawable/rounded_bg"
+                android:layout_margin="5dp"/>
         </LinearLayout>
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -3,7 +3,9 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/PPB/PPB A/Proyek-PPB-A-Fix/app/src/main/res/layout/activity_main.xml" value="0.1" />
+        <entry key="..\:/PPB/PPB A/Proyek-PPB-A-Fix/app/src/main/res/drawable/ic_baseline_cloud_upload_24.xml" value="0.2838541666666667" />
+        <entry key="..\:/PPB/PPB A/Proyek-PPB-A-Fix/app/src/main/res/drawable/rounded_bg.xml" value="0.2838541666666667" />
+        <entry key="..\:/PPB/PPB A/Proyek-PPB-A-Fix/app/src/main/res/layout/activity_main.xml" value="0.22" />
         <entry key="..\:/Users/arier/AndroidStudioProjects/projectkamera/app/src/main/res/layout/activity_main.xml" value="0.2" />
         <entry key="..\:/Users/arier/AndroidStudioProjects/projectkamera/app/src/main/res/xml/file_paths.xml" value="0.25416666666666665" />
       </map>

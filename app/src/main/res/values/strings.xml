@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">projectkamera</string>
+    <string name="imagefolder">ImageFolder</string>
 </resources>
