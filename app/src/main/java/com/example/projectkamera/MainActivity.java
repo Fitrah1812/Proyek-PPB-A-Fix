@@ -54,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
     private ImageView imageView;
     private ImageView viewklik;
 
+    public int i;
     public static final int RequestPermissionCode = 1 ;
     // Uri indicates, where the image will be picked from
     private Uri filePath;
@@ -126,8 +127,8 @@ public class MainActivity extends AppCompatActivity {
                 imageFolder.mkdirs();
                 Date d = new Date();
 
-                CharSequence s = DateFormat.format("MM-dd-yy hh-mm-ss", d.getTime());
-                File image = new File(imageFolder, "Foto" + s.toString() + ".jpg");
+                CharSequence s = DateFormat.format("yyyyMMdd_hhmmss", d.getTime());
+                File image = new File(imageFolder,  s.toString() + ".png");
                 Uri uriSavedImage = FileProvider.getUriForFile(
                         MainActivity.this,
                         "com.example.projectkamera.MainActivity.provider", image);
@@ -226,8 +227,8 @@ public class MainActivity extends AppCompatActivity {
             }
 
             Date d = new Date();
-            CharSequence s = DateFormat.format("MM-dd-yyhh-mm-ss", d.getTime());
-            File output=new File(dir, "Foto" + s.toString() + ".jpg");
+            CharSequence s = DateFormat.format("yyyyMMdd_hhmmss", d.getTime());
+            File output=new File(dir, "Foto" + s.toString() + ".png");
 
 //            filePath = Uri.parse(data.getData());
             filePath = Uri.fromFile(output);
@@ -294,14 +295,17 @@ public class MainActivity extends AppCompatActivity {
             progressDialog.show();
 
             // Defining the child of storageReference
+            Date d = new Date();
+            CharSequence s = DateFormat.format("yyyyMMdd_hhmmss", d.getTime());
             StorageReference ref
                     = storageReference
                     .child(
                             "images/"
-                                    + UUID.randomUUID().toString());
+                                    + s.toString());
 
             // adding listeners on upload
             // or failure of image
+            i+=1;
             ref.putFile(filePath)
                     .addOnSuccessListener(
                             new OnSuccessListener<UploadTask.TaskSnapshot>() {
